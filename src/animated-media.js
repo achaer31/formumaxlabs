@@ -12,7 +12,6 @@ function bindAnimatedMedia(container) {
   let observer, galleryObserver, choice = null, galleryPlayOverride = false, destroyed = false;
   let galleryWasPaused = galleryToggle?.getAttribute('aria-pressed') === 'true';
 
-  const galleryPaused = () => galleryToggle?.getAttribute('aria-pressed') === 'true';
   const prefersPoster = () => choice === 'pause' || (choice !== 'play' && motion.matches && !galleryPlayOverride);
 
   function lockAspect(image, state) {
@@ -36,19 +35,19 @@ function bindAnimatedMedia(container) {
   function updateControls() {
     if (!toggle) return;
     const blocked = [...states.values()].every(state => state.blocked);
-    const paused = prefersPoster() || galleryPaused() || blocked;
+    const paused = prefersPoster() || blocked;
     toggle.type = 'button';
     toggle.textContent = paused ? 'Play animation' : 'Pause animation';
     toggle.setAttribute('aria-label', toggle.textContent);
     toggle.setAttribute('aria-pressed', String(paused));
     const unavailable = [...states.values()].every(state => !state.validSource);
-    toggle.disabled = Boolean(galleryPaused() || unavailable);
-    toggle.title = galleryPaused() ? 'Choose Play gallery to enable animation.' : unavailable ? 'Animation unavailable.' : blocked ? 'Animation could not load. Select to retry.' : '';
+    toggle.disabled = unavailable;
+    toggle.title = unavailable ? 'Animation unavailable.' : blocked ? 'Animation could not load. Select to retry.' : '';
   }
 
   function synchronize() {
     for (const [image, state] of states) {
-      const play = !destroyed && state.visible && !document.hidden && !prefersPoster() && !galleryPaused() && !state.blocked;
+      const play = !destroyed && state.visible && !document.hidden && !prefersPoster() && !state.blocked;
       if (!play) { showPoster(image, state); continue; }
       if (state.active) continue;
       lockAspect(image, state);
@@ -87,7 +86,6 @@ function bindAnimatedMedia(container) {
   }
 
   toggle?.addEventListener('click', () => {
-    if (galleryPaused()) return;
     const blocked = [...states.values()].every(state => state.blocked);
     choice = prefersPoster() || blocked ? 'play' : 'pause';
     if (choice === 'play') for (const state of states.values()) if (state.validSource) state.blocked = false;
@@ -97,9 +95,10 @@ function bindAnimatedMedia(container) {
 
   if (galleryToggle && typeof MutationObserver === 'function') {
     galleryObserver = new MutationObserver(() => {
-      const paused = galleryPaused();
+      const paused = galleryToggle.getAttribute('aria-pressed') === 'true';
+      // Starting the carousel can opt into motion. Stopping its automatic pan
+      // does not revoke playback or override an individual animation's pause.
       if (galleryWasPaused && !paused) galleryPlayOverride = true;
-      if (paused) galleryPlayOverride = false;
       galleryWasPaused = paused;
       synchronize();
     });

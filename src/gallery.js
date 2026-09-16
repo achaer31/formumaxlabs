@@ -17,6 +17,7 @@ function bindGallery(gallery) {
   let visible = false, hovered = false, focused = false, interactionPaused = false;
   let userChoice = null, direction = 1, frame = null, lastFrame = null, destroyed = false;
   let scrollPosition = null, allowFocusedPlay = false, allowHoveredPlay = false;
+  let playbackRequested = false;
   let trackObserver, videoObserver, resizeObserver;
   const originalSnap = track.style.scrollSnapType;
   const originalBehavior = track.style.scrollBehavior;
@@ -38,7 +39,8 @@ function bindGallery(gallery) {
   const globallyPaused = () => userChoice === 'pause' || (userChoice === null && motion.matches);
   const maximum = () => Math.max(0, track.scrollWidth - track.clientWidth);
   const canScroll = () => !destroyed && visible && !document.hidden && !globallyPaused() && !interactionPaused && (!hovered || allowHoveredPlay) && (!focused || allowFocusedPlay) && maximum() > 1;
-  const canPlay = state => !destroyed && visible && state.visible && !document.hidden && !globallyPaused() && !state.userPaused && !state.failed && !state.blocked;
+  const canPlay = state => !destroyed && visible && state.visible && !document.hidden &&
+    (!motion.matches || playbackRequested) && !state.userPaused && !state.failed && !state.blocked;
 
   function pauseVideo(video, state) {
     if (video.paused) return;
@@ -71,9 +73,9 @@ function bindGallery(gallery) {
     if (next) next.disabled = max <= 1 || track.scrollLeft >= max - 1;
     if (toggle) {
       const paused = globallyPaused() || interactionPaused;
-      const label = paused ? 'Play gallery' : 'Pause gallery';
+      const label = paused ? 'Auto-scroll' : 'Pause scroll';
       if (toggle.textContent !== label) toggle.textContent = label;
-      const ariaLabel = paused ? 'Play gallery motion' : 'Pause gallery motion';
+      const ariaLabel = paused ? 'Start automatic scrolling' : 'Pause automatic scrolling';
       if (toggle.getAttribute('aria-label') !== ariaLabel) toggle.setAttribute('aria-label', ariaLabel);
       if (toggle.getAttribute('aria-pressed') !== String(paused)) toggle.setAttribute('aria-pressed', String(paused));
     }
@@ -114,7 +116,7 @@ function bindGallery(gallery) {
 
   function manualNavigation() {
     // Swiping, wheel scrolling, and arrow navigation stop the automatic pan until
-    // Play gallery is chosen. Visible videos keep playing so they can be inspected.
+    // Auto-scroll is chosen. Visible media keeps playing so it can be inspected.
     interactionPaused = true; wake();
   }
 
@@ -128,12 +130,13 @@ function bindGallery(gallery) {
   toggle?.addEventListener('click', () => {
     const paused = globallyPaused() || interactionPaused;
     userChoice = paused ? 'play' : 'pause'; interactionPaused = false;
+    if (paused) playbackRequested = true;
     // Play is an explicit request even while its control still has focus/hover.
     // The next focus navigation or fresh pointer entry reinstates normal pauses.
     allowFocusedPlay = paused && focused; allowHoveredPlay = paused && hovered;
     if (paused) for (const state of media.values()) state.blocked = false;
-    // Explicit Play is allowed after a reduced-motion default; an individual
-    // video's native Pause is preserved until the user plays that video again.
+    // Starting the scroll also opts into playback after a reduced-motion default.
+    // Pausing the scroll leaves playback and individual video choices untouched.
     wake();
   }, listeners);
   gallery.addEventListener('pointerenter', event => { if (event.pointerType !== 'touch') { hovered = true; allowHoveredPlay = false; wake(); } }, listeners);
@@ -206,7 +209,10 @@ function bindGallery(gallery) {
     resizeObserver.observe(track);
     for (const child of track.children) resizeObserver.observe(child);
   }
-  const preferenceChanged = () => { if (motion.matches && userChoice === 'play') userChoice = null; wake(); };
+  const preferenceChanged = () => {
+    if (motion.matches) { playbackRequested = false; if (userChoice === 'play') userChoice = null; }
+    wake();
+  };
   if (motion.addEventListener) motion.addEventListener('change', preferenceChanged, listeners);
   else motion.addListener(preferenceChanged);
   updateControls();

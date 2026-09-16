@@ -76,23 +76,40 @@ test('static image galleries pingpong at30px/s without cloning and pause after m
   state.gallery.emit('pointerleave'); state.advance(0); state.advance(100); assert.equal(state.track.scrollLeft, 600);
   state.advance(100); assert.equal(state.track.scrollLeft, 597);
   state.track.emit('pointerdown', { pointerType: 'touch' });
-  assert.equal(state.frames.size, 0); assert.equal(state.toggle.textContent, 'Play gallery');
+  assert.equal(state.frames.size, 0); assert.equal(state.toggle.textContent, 'Auto-scroll');
   state.toggle.emit('click'); assert.ok(state.frames.size > 0);
   assert.equal(state.track.children.length, 0);
   state.cleanup();
 });
 
-test('reduced motion defaults paused and an explicit user pause survives preference changes', async () => {
+test('reduced motion defaults paused and pausing auto-scroll leaves opted-in video playback running', async () => {
   const state = await setup({ reduced: true });
   state.intersect(state.track, 1); state.intersect(state.videos[0], 1);
   assert.equal(state.frames.size, 0); assert.equal(state.videos[0].loads, 0);
-  assert.equal(state.toggle.textContent, 'Play gallery');
+  assert.equal(state.toggle.textContent, 'Auto-scroll');
   state.toggle.emit('click'); assert.equal(state.videos[0].plays, 1);
+  assert.equal(state.toggle.textContent, 'Pause scroll');
+  assert.equal(state.toggle.getAttribute('aria-label'), 'Pause automatic scrolling');
   state.toggle.emit('click');
+  assert.equal(state.videos[0].paused, false); assert.equal(state.frames.size, 0);
   state.motion.matches = true; state.motion.emit('change');
-  state.motion.matches = false; state.motion.emit('change');
-  assert.equal(state.toggle.textContent, 'Play gallery'); assert.equal(state.frames.size, 0);
   assert.equal(state.videos[0].paused, true);
+  await Promise.resolve(); await Promise.resolve();
+  state.motion.matches = false; state.motion.emit('change');
+  assert.equal(state.toggle.textContent, 'Auto-scroll'); assert.equal(state.frames.size, 0);
+  assert.equal(state.videos[0].paused, false);
+  state.cleanup();
+});
+
+test('carousel pause and manual swiping leave visible videos looping', async () => {
+  const state = await setup();
+  state.intersect(state.track, 1); state.intersect(state.videos[0], 1);
+  state.toggle.emit('click');
+  assert.equal(state.frames.size, 0); assert.equal(state.videos[0].paused, false);
+  state.toggle.emit('click'); assert.equal(state.frames.size, 1);
+  state.track.emit('touchstart');
+  assert.equal(state.frames.size, 0); assert.equal(state.videos[0].paused, false);
+  assert.equal(state.videos[0].plays, 1); assert.equal(state.videos[0].loop, true);
   state.cleanup();
 });
 
