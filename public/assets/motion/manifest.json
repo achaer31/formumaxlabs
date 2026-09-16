@@ -1,5 +1,12 @@
 [
   {
+    "id": "motion-11",
+    "video": "/assets/motion/motion-11.mp4",
+    "poster": "/assets/motion/motion-11.jpg",
+    "label": "Motion study 11",
+    "duration": 10.0
+  },
+  {
     "id": "motion-01",
     "video": "/assets/motion/motion-01.mp4",
     "poster": "/assets/motion/motion-01.jpg",
@@ -49,25 +56,11 @@
     "duration": 15.2
   },
   {
-    "id": "motion-11",
-    "video": "/assets/motion/motion-11.mp4",
-    "poster": "/assets/motion/motion-11.jpg",
-    "label": "Motion study 11",
-    "duration": 10.0
-  },
-  {
     "id": "motion-12",
     "video": "/assets/motion/motion-12.mp4",
     "poster": "/assets/motion/motion-12.jpg",
     "label": "Motion study 12",
     "duration": 15.34
-  },
-  {
-    "id": "motion-13",
-    "video": "/assets/motion/motion-13.mp4",
-    "poster": "/assets/motion/motion-13.jpg",
-    "label": "Motion study 13",
-    "duration": 10.07
   },
   {
     "id": "motion-14",
