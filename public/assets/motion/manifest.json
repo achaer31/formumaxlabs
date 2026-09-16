@@ -7,13 +7,6 @@
     "duration": 10.0
   },
   {
-    "id": "motion-01",
-    "video": "/assets/motion/motion-01.mp4",
-    "poster": "/assets/motion/motion-01.jpg",
-    "label": "Motion study 01",
-    "duration": 5.0
-  },
-  {
     "id": "motion-03",
     "video": "/assets/motion/motion-03.mp4",
     "poster": "/assets/motion/motion-03.jpg",
