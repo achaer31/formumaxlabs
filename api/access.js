@@ -1,4 +1,4 @@
-import { accessPayload, ApiError, currentCapture, handler, PRODUCT, readToken, requireConfiguration, validateId } from '../lib/payments.js';
+import { accessPayload, ApiError, boundPrice, currentCapture, handler, PRODUCT, readToken, requireConfiguration, validateId } from '../lib/payments.js';
 
 export default handler('GET', async (req, res) => {
   requireConfiguration();
@@ -8,6 +8,6 @@ export default handler('GET', async (req, res) => {
   validateId(access.captureId);
   // PayPal is the source of truth: pending, reversed, refunded, and partially
   // refunded payments must not unlock a new access response.
-  await currentCapture(access.captureId, access.orderId);
-  res.status(200).json(accessPayload(access.orderId, access.captureId));
+  await currentCapture(access.captureId, access.orderId, boundPrice(access));
+  res.status(200).json(accessPayload(access.orderId, access.captureId, boundPrice(access)));
 });

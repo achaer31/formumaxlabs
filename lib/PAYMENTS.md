@@ -10,7 +10,7 @@ Required Vercel production environment values:
 - `PAYPAL_CLIENT_SECRET`: live server-side secret.
 - `ACCESS_TOKEN_SECRET`: randomly generated secret of at least 32 characters.
 - `COURSE_NOTION_URL`: published HTTPS Notion course URL; never embedded in the client bundle.
-- `SITE_URL`: public origin, initially `https://formumaxlabs.vercel.app`. Update when connecting the custom domain.
+- `SITE_URL`: canonical public origin, `https://formumaxlabs.com` for production.
 - `META_PIXEL_ID`: pixel/dataset ID for browser events.
 
 Optional server-side Meta conversion reporting:
@@ -23,15 +23,21 @@ Optional server-side Meta conversion reporting:
 Call all APIs same-origin with browser cookies and JSON `Content-Type` on POSTs.
 Errors have `{ "error": { "code": "...", "message": "..." } }`.
 
-1. `GET /api/config`: initializes a secure HttpOnly checkout session and returns
-   `{paypalClientId, price, currency, productId, productName, checkoutAvailable, pixelId}`.
-   Check `checkoutAvailable` before loading PayPal buttons.
-2. `POST /api/orders` with `{productId:"ultimate-video-ai-mastery", consent:boolean, fbp?, fbc?}`.
-   Returns `{orderId, price:"29.00", currency:"USD"}`. The client cannot supply prices.
-   Creation retries reuse a stable PayPal request ID for the checkout session.
+1. `GET /api/config`: initializes secure HttpOnly checkout and first-visit offer
+   cookies. Returns `{paypalClientId, price, regularPrice:"99.00", offerPrice:"29.00",
+   offerActive, offerExpiresAt, serverTime, acceptedOrder, currency, productId,
+   productName, checkoutAvailable, pixelId}`. Times are ISO strings; the deadline
+   stays fixed on refresh. Check `checkoutAvailable` before loading PayPal buttons.
+2. `POST /api/orders` with `{productId:"ultimate-video-ai-mastery", expectedPrice?, consent:boolean, fbp?, fbc?}`.
+   Returns `{orderId, price, currency:"USD"}`. The server chooses USD29 before the
+   signed five-hour deadline and USD99 afterward. `expectedPrice` is a display
+   consistency check, not permission to set a price: a mismatch returns
+   `PRICE_CHANGED` before creating an order. Creation retries reuse a stable
+   PayPal request ID for that checkout session and server-chosen price.
 3. After buyer approval, `POST /api/capture` with `{orderId, consent?:boolean}`.
    A false consent value revokes advertising consent for this order. Only a verified
-   `COMPLETED` USD 29 capture for the right product and signed order session sets
+   `COMPLETED` capture matching the signed order's USD29 or USD99 price, product,
+   and browser session sets
    the paid cookie. Returns `{orderId,captureId,notionUrl,eventId,price,currency}`.
    Fire a consented browser Purchase using `eventID: response.eventId` for deduplication.
    `PAYMENT_DECLINED` can use the PayPal SDK's restart method; `PAYMENT_PENDING`
@@ -43,7 +49,31 @@ Errors have `{ "error": { "code": "...", "message": "..." } }`.
 `PageView`, `ViewContent`, `InitiateCheckout`, and `AddPaymentInfo` are browser
 events. The optional server-side Purchase respects the consent saved with the
 checkout, hashes the payer email, and uses `purchase_<captureId>` for the event ID.
+Both browser and server Purchase events use the verified paid amount. Historical
+course access is not counted as a new purchase.
 An analytics outage never blocks delivery of a completed purchase.
+
+## Five-hour visitor offer
+
+`__Host-fm_offer` records the first-visit timestamp and an immutable five-hour
+deadline, signed on the server and retained for one year. The expired cookie is
+retained so refreshing or returning in that browser does not restart the offer.
+Tampered or malformed offer cookies receive the regular price. This is a browser
+offer, not an authenticated person-level limit: a separate browser or deleted
+cookies cannot be identified without an account or durable identity service.
+
+Existing signed USD29 orders remain at USD29 after the public offer expires,
+while their two-hour checkout session remains valid. The config response's
+`acceptedOrder` exposes this accepted total to that browser. Newly created orders
+after the deadline cost USD99. Older signed USD29 receipts remain supported.
+
+`initOffer()` in `src/purchase.js` shares a single config request with checkout
+and tracking, updates `[data-course-price]`, `[data-promo-only]`,
+`[data-promo-countdown]`, and `[data-promo-label]`, and checks the server again at
+expiry. Prices inside the checkout dialog show the accepted order total when
+present. A price change before order creation asks the buyer to review the new
+total and confirm the purchase terms again; it never silently creates the
+higher-priced order from a displayed USD29 total.
 
 ## Behavior and limits
 

@@ -71,9 +71,11 @@ function bindGallery(gallery) {
     if (next) next.disabled = max <= 1 || track.scrollLeft >= max - 1;
     if (toggle) {
       const paused = globallyPaused() || interactionPaused;
-      toggle.textContent = paused ? 'Play gallery' : 'Pause gallery';
-      toggle.setAttribute('aria-label', paused ? 'Play gallery motion' : 'Pause gallery motion');
-      toggle.setAttribute('aria-pressed', String(paused));
+      const label = paused ? 'Play gallery' : 'Pause gallery';
+      if (toggle.textContent !== label) toggle.textContent = label;
+      const ariaLabel = paused ? 'Play gallery motion' : 'Pause gallery motion';
+      if (toggle.getAttribute('aria-label') !== ariaLabel) toggle.setAttribute('aria-label', ariaLabel);
+      if (toggle.getAttribute('aria-pressed') !== String(paused)) toggle.setAttribute('aria-pressed', String(paused));
     }
   }
 

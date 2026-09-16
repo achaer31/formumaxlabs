@@ -12,6 +12,7 @@ async function setup({ reduced = false, videoCount = 2 } = {}) {
     addEventListener(name, callback) { if (!this.handlers.has(name)) this.handlers.set(name, []); this.handlers.get(name).push(callback); }
     emit(name, data = {}) { for (const callback of this.handlers.get(name) || []) callback(data); }
     setAttribute(name, value) { this.attributes.set(name, value); }
+    getAttribute(name) { return this.attributes.get(name) ?? null; }
     hasAttribute(name) { return this.attributes.has(name); }
     removeAttribute(name) { this.attributes.delete(name); }
     contains(element) { return element === this || this.children.includes(element); }

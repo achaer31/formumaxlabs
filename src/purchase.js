@@ -1,7 +1,8 @@
-const PRODUCT={id:'ultimate-video-ai-mastery',price:'29.00',currency:'USD'};
+const PRODUCT={id:'ultimate-video-ai-mastery',offerPrice:'29.00',regularPrice:'99.00',currency:'USD'};
 const CONSENT_KEY='formumax-advertising-consent',PENDING_KEY='formumax-pending-checkout';
 const PAYMENT_ID=/^[A-Z0-9]{10,32}$/;
-let configPromise,configTime=0,paypalLoading,checkoutLoading,createLoading,captureLoading;
+let configPromise,configCache,configTime=0,paypalLoading,checkoutLoading,createLoading,captureLoading;
+let offerTimer,serverOffset=0,nextExpiryRefresh=0,acceptedOrder=null,clickedPrice=null,pricingNotice='',lastDisplayedPrice=null;
 let rendered=false,trackingStarted=false,trackingLoading,termsListener;
 
 export function getConsent(){try{if(navigator.globalPrivacyControl)return false;const c=localStorage.getItem(CONSENT_KEY);return c==='yes'?true:c==='no'?false:null;}catch{return false;}}
@@ -28,11 +29,66 @@ async function api(url,{body,timeout=15000}={}){
     throw e;
   }finally{clearTimeout(timer);}
 }
-function assertProduct(data){if(!data||data.price!==PRODUCT.price||data.currency!==PRODUCT.currency)throw Error('The checkout details have changed. Please refresh the page before continuing.');}
+function validPrice(price){return [PRODUCT.offerPrice,PRODUCT.regularPrice].includes(price);}
+function formatPrice(price){return `$${Number(price).toFixed(0)}`;}
+function currentPrice(){return configCache?.offerActive&&Date.parse(configCache.offerExpiresAt)>Date.now()+serverOffset?PRODUCT.offerPrice:PRODUCT.regularPrice;}
+function checkoutPrice(){return acceptedOrder?.price||currentPrice();}
+function assertProduct(data){if(!data||!validPrice(data.price)||data.currency!==PRODUCT.currency)throw Error('The checkout details have changed. Please refresh the page before continuing.');}
+function updateOfferDisplay(){
+  if(!configCache)return;
+  const remaining=Math.max(0,Date.parse(configCache.offerExpiresAt)-(Date.now()+serverOffset));
+  const active=configCache.offerActive&&remaining>0,price=active?PRODUCT.offerPrice:PRODUCT.regularPrice;
+  if(lastDisplayedPrice===PRODUCT.offerPrice&&price===PRODUCT.regularPrice&&!acceptedOrder){
+    const terms=document.querySelector('#purchase-terms');if(terms?.checked){terms.checked=false;termsListener?.();}
+    status('Your promotional window has ended. Review the US$99 total and confirm the purchase terms to continue.');
+  }
+  lastDisplayedPrice=price;
+  for(const node of document.querySelectorAll?.('[data-course-price]')||[]){node.textContent=formatPrice(node.closest?.('#checkout-dialog')?checkoutPrice():price);node.classList?.toggle('price-unavailable',false);}
+  for(const node of document.querySelectorAll?.('[data-promo-only]')||[])node.hidden=!active;
+  const seconds=active?Math.ceil(remaining/1000):0;
+  const countdown=[Math.floor(seconds/3600),Math.floor(seconds%3600/60),seconds%60].map(n=>String(n).padStart(2,'0')).join(':');
+  for(const node of document.querySelectorAll?.('[data-promo-countdown]')||[])node.textContent=countdown;
+  for(const node of document.querySelectorAll?.('[data-promo-label]')||[])node.textContent=active?'Your 5-hour offer':'Regular price';
+  const total=document.querySelector('.checkout-total b');
+  if(total&&!total.matches?.('[data-course-price]')&&!total.querySelector?.('[data-course-price]'))total.textContent=`US${formatPrice(checkoutPrice())}`;
+  let note=document.querySelector('#checkout-order-price');
+  if(acceptedOrder&&acceptedOrder.price!==price&&document.querySelector('#paypal-buttons')){
+    if(!note){note=document.createElement('p');note.id='checkout-order-price';note.className='checkout-explain';document.querySelector('#checkout-content')?.appendChild(note);}
+    note.textContent=`Your existing PayPal order remains US${formatPrice(acceptedOrder.price)}. The accepted order total is shown at PayPal.`;
+  }else note?.remove();
+  if(configCache.offerActive&&!active&&Date.now()>=nextExpiryRefresh){nextExpiryRefresh=Date.now()+30000;void config(true).catch(()=>{});}
+}
 async function config(refresh=false){
-  if(refresh||Date.now()-configTime>300000)configPromise=undefined;
-  if(!configPromise)configPromise=api('/api/config').then(data=>{assertProduct(data);if(data.productId!==PRODUCT.id||typeof data.checkoutAvailable!=='boolean')throw Error('The course checkout could not be verified. Please contact support.');configTime=Date.now();return data;}).catch(e=>{configPromise=undefined;throw e;});
+  // A single in-flight request initializes the signed visitor cookie even when
+  // price display, analytics and checkout start together.
+  if(configPromise)return configPromise;
+  if(!refresh&&configCache&&Date.now()-configTime<300000)return configCache;
+  configPromise=api('/api/config').then(data=>{
+    assertProduct(data);
+    if(data.productId!==PRODUCT.id||typeof data.checkoutAvailable!=='boolean'||data.regularPrice!==PRODUCT.regularPrice||data.offerPrice!==PRODUCT.offerPrice||typeof data.offerActive!=='boolean'||!Number.isFinite(Date.parse(data.serverTime))||(data.offerActive&&!Number.isFinite(Date.parse(data.offerExpiresAt))))throw Error('The course checkout could not be verified. Please contact support.');
+    if(data.price!==(data.offerActive?PRODUCT.offerPrice:PRODUCT.regularPrice))throw Error('The checkout price could not be verified.');
+    if(data.acceptedOrder){assertProduct(data.acceptedOrder);if(!PAYMENT_ID.test(data.acceptedOrder.orderId||''))throw Error('The accepted order could not be verified.');}
+    configCache=data;configTime=Date.now();serverOffset=Date.parse(data.serverTime)-Date.now();acceptedOrder=data.acceptedOrder||null;updateOfferDisplay();return data;
+  }).finally(()=>{configPromise=undefined;});
   return configPromise;
+}
+function showOfferUnavailable(){
+  if(configCache)return;
+  for(const node of document.querySelectorAll?.('[data-course-price]')||[]){node.textContent='Check price';node.classList?.toggle('price-unavailable',true);}
+  for(const node of document.querySelectorAll?.('[data-promo-only]')||[])node.hidden=true;
+  for(const node of document.querySelectorAll?.('[data-promo-label]')||[])node.textContent='Price confirmed at checkout';
+}
+function refreshOfferOnReturn(){
+  if(document.hidden)return;
+  return config().then(updateOfferDisplay).catch(showOfferUnavailable);
+}
+export async function initOffer(){
+  if(!offerTimer){
+    offerTimer=setInterval(updateOfferDisplay,1000);offerTimer.unref?.();
+    document.addEventListener('visibilitychange',refreshOfferOnReturn);window.addEventListener('focus',refreshOfferOnReturn);
+  }
+  try{await config();updateOfferDisplay();}catch{showOfferUnavailable();}
+  return ()=>{clearInterval(offerTimer);offerTimer=undefined;document.removeEventListener('visibilitychange',refreshOfferOnReturn);window.removeEventListener('focus',refreshOfferOnReturn);};
 }
 export async function initTracking(){
   if(getConsent()!==true)return;
@@ -46,14 +102,16 @@ export async function initTracking(){
   })().catch(()=>{trackingStarted=false;}).finally(()=>{trackingLoading=undefined;});
   return trackingLoading;
 }
-export function track(event,eventID){
+export function track(event,eventID,paidPrice){
   if(getConsent()!==true||!window.fbq||!['ViewContent','InitiateCheckout','AddPaymentInfo','Purchase'].includes(event))return false;
-  window.fbq('track',event,{content_ids:[PRODUCT.id],content_type:'product',content_name:'Ultimate AI Video Mastery',currency:PRODUCT.currency,value:Number(PRODUCT.price)},eventID?{eventID}:undefined);return true;
+  if(event==='Purchase'&&!validPrice(paidPrice))return false;
+  const price=event==='Purchase'?paidPrice:event==='ViewContent'?currentPrice():checkoutPrice();
+  window.fbq('track',event,{content_ids:[PRODUCT.id],content_type:'product',content_name:'Ultimate AI Video Mastery',currency:PRODUCT.currency,value:Number(price)},eventID?{eventID}:undefined);return true;
 }
 function cookie(name){return document.cookie.split(';').map(x=>x.trim()).find(x=>x.startsWith(name+'='))?.slice(name.length+1);}
 function status(message,error=false){const p=document.querySelector('#checkout-status');if(p){p.textContent=message;p.classList.toggle('error',error);}}
 function readPending(){try{const p=JSON.parse(localStorage.getItem(PENDING_KEY)||'null');return p&&PAYMENT_ID.test(p.orderId)&&Number.isFinite(p.approvedAt)?p:null;}catch{return null;}}
-function savePending(orderId){const old=readPending();try{localStorage.setItem(PENDING_KEY,JSON.stringify(old?.orderId===orderId?old:{orderId,approvedAt:Date.now()}));}catch{}}
+function savePending(orderId){const old=readPending();try{localStorage.setItem(PENDING_KEY,JSON.stringify(old?.orderId===orderId?old:{orderId,price:acceptedOrder?.price,approvedAt:Date.now()}));}catch{}}
 function retryButton(label,action){
   document.querySelector('#checkout-retry')?.remove();const b=document.createElement('button');b.id='checkout-retry';b.type='button';b.className='button primary';b.textContent=label;
   b.onclick=async()=>{b.disabled=true;try{await action();}catch(e){status(e.message,true);}finally{b.disabled=false;}};
@@ -61,7 +119,7 @@ function retryButton(label,action){
 }
 async function recordPurchase(data){
   if(getConsent()!==true)return;await initTracking();const key=`formumax-purchase-${data.captureId}`;
-  try{if(!localStorage.getItem(key)&&track('Purchase',data.eventId))localStorage.setItem(key,'sent');}catch{track('Purchase',data.eventId);}
+  try{if(!localStorage.getItem(key)&&track('Purchase',data.eventId,data.price))localStorage.setItem(key,'sent');}catch{track('Purchase',data.eventId,data.price);}
 }
 async function showAccess(data,{purchaseEvent=false}={}){
   assertProduct(data);
@@ -72,7 +130,7 @@ async function showAccess(data,{purchaseEvent=false}={}){
   const heading=document.createElement('h2');heading.id='checkout-title';heading.textContent='Your next scene starts now.';
   const desc=document.createElement('p');desc.textContent='Your English playbook is ready. Open the Notion course and begin with Start Here. Save the course link for future access.';
   const link=document.createElement('a');link.href=url.href;link.target='_blank';link.rel='noopener noreferrer';link.className='button primary access-link';link.textContent='Open your course in Notion ↗';
-  const receipt=document.createElement('p');receipt.className='access-success';receipt.textContent=`Paid US$29 · PayPal transaction: ${data.captureId}`;
+  const receipt=document.createElement('p');receipt.className='access-success';receipt.textContent=`Paid US${formatPrice(data.price)} · PayPal transaction: ${data.captureId}`;
   const support=document.createElement('p'),email=document.createElement('a');email.href='mailto:achaer31@gmail.com';email.textContent='achaer31@gmail.com';support.append('Need help? Email ',email,' with your transaction ID. Your PayPal receipt confirms your payment; save the course link from this screen.');
   target.replaceChildren(eyebrow,heading,desc,link,receipt,support);rendered=true;
   try{if(readPending()?.orderId===data.orderId)localStorage.removeItem(PENDING_KEY);}catch{}
@@ -117,15 +175,20 @@ async function prepareCheckout(accessOnly){
   const buttons=window.paypal.Buttons({
     style:{layout:'vertical',shape:'rect',color:'gold',label:'paypal',height:46},
     onInit(data,actions){if(termsListener)terms.removeEventListener('change',termsListener);termsListener=()=>terms.checked?actions.enable():actions.disable();terms.addEventListener('change',termsListener);termsListener();status('Confirm the purchase terms above to continue securely with PayPal.');},
-    onClick(data,actions){if(!terms.checked){status('Please confirm the purchase terms to continue.',true);return actions.reject?.();}track('AddPaymentInfo');return actions.resolve?.();},
+    onClick(data,actions){if(!terms.checked){status('Please confirm the purchase terms to continue.',true);return actions.reject?.();}pricingNotice='';clickedPrice=checkoutPrice();track('AddPaymentInfo');return actions.resolve?.();},
     async createOrder(){
       if(!terms.checked)throw Error('Please confirm the purchase terms to continue.');if(createLoading)return createLoading;
+      const displayedPrice=clickedPrice||checkoutPrice();
       createLoading=(async()=>{
         const fresh=await config(true);if(!fresh.checkoutAvailable||fresh.paypalClientId!==c.paypalClientId)throw Error('Checkout has been updated. Please refresh this page.');
+        if(displayedPrice!==checkoutPrice()){const e=Error(`The checkout total is now US${formatPrice(checkoutPrice())}. Please review the updated price and confirm the terms again.`);e.code='PRICE_CHANGED';throw e;}
         status('Creating your secure order…');const consent=getConsent()===true;
-        const data=await api('/api/orders',{body:{productId:PRODUCT.id,consent,...(consent?{fbp:cookie('_fbp'),fbc:cookie('_fbc')}:{})},timeout:45000});
-        assertProduct(data);if(!PAYMENT_ID.test(data.orderId||''))throw Error('The PayPal order could not be verified. Please retry.');return data.orderId;
-      })().finally(()=>{createLoading=undefined;});return createLoading;
+        const data=await api('/api/orders',{body:{productId:PRODUCT.id,expectedPrice:checkoutPrice(),consent,...(consent?{fbp:cookie('_fbp'),fbc:cookie('_fbc')}:{})},timeout:45000});
+        assertProduct(data);if(!PAYMENT_ID.test(data.orderId||''))throw Error('The PayPal order could not be verified. Please retry.');acceptedOrder=data;updateOfferDisplay();return data.orderId;
+      })().catch(async e=>{
+        if(e.code==='PRICE_CHANGED'){await config(true).catch(()=>{});terms.checked=false;termsListener?.();pricingNotice=e.message;clickedPrice=null;status(e.message,true);}
+        throw e;
+      }).finally(()=>{createLoading=undefined;});return createLoading;
     },
     async onApprove(data,actions){
       if(!PAYMENT_ID.test(data.orderID||'')){status('The PayPal reference could not be verified. Please contact support.',true);return;}
@@ -135,7 +198,7 @@ async function prepareCheckout(accessOnly){
       }
     },
     onCancel(){status('Payment cancelled. You can try again when ready.');},
-    onError(){const pending=readPending();if(pending){paymentRetry(pending.orderId,Error('PayPal could not finish payment verification.'));return;}status('PayPal could not finish checkout. If you were charged, do not pay again; contact support. Otherwise, close this window and retry.',true);}
+    onError(){if(pricingNotice){status(pricingNotice,true);return;}const pending=readPending();if(pending){paymentRetry(pending.orderId,Error('PayPal could not finish payment verification.'));return;}status('PayPal could not finish checkout. If you were charged, do not pay again; contact support. Otherwise, close this window and retry.',true);}
   });
   try{await buttons.render('#paypal-buttons');rendered=true;}catch(e){try{await buttons.close?.();}catch{}document.querySelector('#paypal-buttons')?.replaceChildren();throw e;}
 }

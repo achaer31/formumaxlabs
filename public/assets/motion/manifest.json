@@ -110,5 +110,26 @@
     "poster": "/assets/motion/motion-20.jpg",
     "label": "Motion study 20",
     "duration": 12.54
+  },
+  {
+    "id": "motion-02",
+    "video": "/assets/motion/motion-02.mp4",
+    "poster": "/assets/motion/motion-02.jpg",
+    "label": "Motion study 02",
+    "duration": 5.0
+  },
+  {
+    "id": "motion-05",
+    "video": "/assets/motion/motion-05.mp4",
+    "poster": "/assets/motion/motion-05.jpg",
+    "label": "Motion study 05",
+    "duration": 5.0
+  },
+  {
+    "id": "motion-06",
+    "video": "/assets/motion/motion-06.mp4",
+    "poster": "/assets/motion/motion-06.jpg",
+    "label": "Motion study 06",
+    "duration": 7.07
   }
 ]
