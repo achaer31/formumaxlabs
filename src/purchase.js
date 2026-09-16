@@ -42,7 +42,7 @@ export async function initTracking(){
     const c=await config();if(getConsent()!==true||!/^\d+$/.test(c.pixelId||''))return;
     if(!window.fbq){const q=function(){q.callMethod?q.callMethod.apply(q,arguments):q.queue.push(arguments)};q.push=q;q.loaded=true;q.version='2.0';q.queue=[];window.fbq=q;window._fbq=q;const s=document.createElement('script');s.async=true;s.src='https://connect.facebook.net/en_US/fbevents.js';document.head.appendChild(s);}
     window.fbq('consent','grant');window.fbq('init',c.pixelId);trackingStarted=true;window.fbq('track','PageView');
-    if(!['/privacy','/terms','/refunds'].includes(location.pathname.replace(/\/$/,'')))track('ViewContent');
+    if(location.pathname.replace(/\/$/,'')==='/ultimatevideoaimastery')track('ViewContent');
   })().catch(()=>{trackingStarted=false;}).finally(()=>{trackingLoading=undefined;});
   return trackingLoading;
 }

@@ -56,12 +56,29 @@ An analytics outage never blocks delivery of a completed purchase.
 - The access cookie lasts one year and is local to the purchasing browser and domain.
   Domain migration, deleted cookies, and a different device require customer support to
   restore access after verifying the PayPal transaction. There is no invented email service.
+  This cookie expiry is a browser convenience limit, not an expiry of the purchased
+  course entitlement; the course offer and purchase terms define that entitlement.
 - A published shared Notion page can be forwarded after disclosure. Rechecking PayPal
   prevents API access after refunds but cannot revoke an already-known Notion link.
   Per-buyer Notion invitations or an authenticated course platform would be needed for that.
 - No live purchase is performed by the test suite. It replaces every network call with fixtures.
 
 Run the meaningful payment tests with `node --test tests/payments.test.js`.
+
+## Recent purchase notifications
+
+`GET /api/activity` currently returns an empty JSON array (`[]`). A live, read-only
+check found that the configured PayPal app lacks the Transaction Search scope and
+the reporting endpoint returns HTTP 403. No verified, durable course-sales source
+is available in this deployment, so the endpoint deliberately does not generate
+purchase notices or expose merchant transaction data. A frontend may hide purchase
+notices and display factual offer information, without invented purchasers or times.
+
+Future activity integration must verify the exact course product, amount/currency,
+original capture, current completed status, and actual timestamp before publishing
+an anonymous event. Enabling reporting permission alone does not activate a feed;
+that verification still needs to be implemented. No in-memory list is used as a
+pretend purchase record, and no new data-storage service is provisioned.
 
 References checked during implementation:
 

@@ -50,6 +50,13 @@ test('pending approved payment recovers after reload using the same reference',a
 test('first advertising consent queues PageView and ViewContent; revoked consent blocks Purchase',async()=>{
   const{mod,state}=await setup({consent:true});await mod.initTracking();assert.ok(state.events.some(e=>e[0]==='track'&&e[1]==='PageView'));assert.ok(state.events.some(e=>e[0]==='track'&&e[1]==='ViewContent'));await mod.initCheckout();await state.paypalOptions.createOrder();mod.setConsent(false);await state.paypalOptions.onApprove({orderID:ORDER},{});assert.equal(state.calls.find(c=>c.url==='/api/capture').body.consent,false);assert.equal(state.events.some(e=>e[1]==='Purchase'),false);
 });
+test('catalog, access, and legal pages do not report a course product view',async()=>{
+  for(const path of ['/','/ultimatevideoaimastery/access','/privacy']){
+    const{mod,state}=await setup({consent:true});location.pathname=path;await mod.initTracking();
+    assert.ok(state.events.some(e=>e[0]==='track'&&e[1]==='PageView'));
+    assert.equal(state.events.some(e=>e[0]==='track'&&e[1]==='ViewContent'),false,path);
+  }
+});
 test('capture retries retain backend Purchase event ID and do not double-track',async()=>{
   const{mod,state}=await setup({consent:true});await mod.initCheckout();await state.paypalOptions.createOrder();await Promise.all([state.paypalOptions.onApprove({orderID:ORDER},{}),state.paypalOptions.onApprove({orderID:ORDER},{})]);const purchases=state.events.filter(e=>e[1]==='Purchase');assert.equal(purchases.length,1);assert.equal(purchases[0][3].eventID,'purchase_'+CAPTURE);assert.equal(state.calls.filter(c=>c.url==='/api/capture').length,1);
 });

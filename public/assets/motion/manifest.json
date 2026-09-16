@@ -1,0 +1,114 @@
+[
+  {
+    "id": "motion-01",
+    "video": "/assets/motion/motion-01.mp4",
+    "poster": "/assets/motion/motion-01.jpg",
+    "label": "Motion study 01",
+    "duration": 5.0
+  },
+  {
+    "id": "motion-03",
+    "video": "/assets/motion/motion-03.mp4",
+    "poster": "/assets/motion/motion-03.jpg",
+    "label": "Motion study 03",
+    "duration": 5.0
+  },
+  {
+    "id": "motion-04",
+    "video": "/assets/motion/motion-04.mp4",
+    "poster": "/assets/motion/motion-04.jpg",
+    "label": "Motion study 04",
+    "duration": 5.0
+  },
+  {
+    "id": "motion-07",
+    "video": "/assets/motion/motion-07.mp4",
+    "poster": "/assets/motion/motion-07.jpg",
+    "label": "Motion study 07",
+    "duration": 10.1
+  },
+  {
+    "id": "motion-08",
+    "video": "/assets/motion/motion-08.mp4",
+    "poster": "/assets/motion/motion-08.jpg",
+    "label": "Motion study 08",
+    "duration": 11.6
+  },
+  {
+    "id": "motion-09",
+    "video": "/assets/motion/motion-09.mp4",
+    "poster": "/assets/motion/motion-09.jpg",
+    "label": "Motion study 09",
+    "duration": 13.74
+  },
+  {
+    "id": "motion-10",
+    "video": "/assets/motion/motion-10.mp4",
+    "poster": "/assets/motion/motion-10.jpg",
+    "label": "Motion study 10",
+    "duration": 15.2
+  },
+  {
+    "id": "motion-11",
+    "video": "/assets/motion/motion-11.mp4",
+    "poster": "/assets/motion/motion-11.jpg",
+    "label": "Motion study 11",
+    "duration": 10.0
+  },
+  {
+    "id": "motion-12",
+    "video": "/assets/motion/motion-12.mp4",
+    "poster": "/assets/motion/motion-12.jpg",
+    "label": "Motion study 12",
+    "duration": 15.34
+  },
+  {
+    "id": "motion-13",
+    "video": "/assets/motion/motion-13.mp4",
+    "poster": "/assets/motion/motion-13.jpg",
+    "label": "Motion study 13",
+    "duration": 10.07
+  },
+  {
+    "id": "motion-14",
+    "video": "/assets/motion/motion-14.mp4",
+    "poster": "/assets/motion/motion-14.jpg",
+    "label": "Motion study 14",
+    "duration": 15.34
+  },
+  {
+    "id": "motion-15",
+    "video": "/assets/motion/motion-15.mp4",
+    "poster": "/assets/motion/motion-15.jpg",
+    "label": "Motion study 15",
+    "duration": 10.07
+  },
+  {
+    "id": "motion-16",
+    "video": "/assets/motion/motion-16.mp4",
+    "poster": "/assets/motion/motion-16.jpg",
+    "label": "Motion study 16",
+    "duration": 15.14
+  },
+  {
+    "id": "motion-18",
+    "video": "/assets/motion/motion-18.mp4",
+    "poster": "/assets/motion/motion-18.jpg",
+    "label": "Motion study 18",
+    "duration": 15.07
+  },
+  {
+    "id": "motion-19",
+    "video": "/assets/motion/motion-19.mp4",
+    "poster": "/assets/motion/motion-19.jpg",
+    "label": "Motion study 19",
+    "duration": 15.34
+  },
+  {
+    "id": "motion-20",
+    "video": "/assets/motion/motion-20.mp4",
+    "poster": "/assets/motion/motion-20.jpg",
+    "label": "Motion study 20",
+    "duration": 12.54
+  }
+]
