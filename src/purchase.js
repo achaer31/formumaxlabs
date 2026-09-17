@@ -1,4 +1,4 @@
-const PRODUCT={id:'ultimate-video-ai-mastery',offerPrice:'29.00',regularPrice:'99.00',currency:'USD'};
+const PRODUCT={id:'ultimate-video-ai-mastery',offerPrice:'19.00',regularPrice:'29.00',currency:'USD'};
 const CONSENT_KEY='formumax-advertising-consent',PENDING_KEY='formumax-pending-checkout';
 const PAYMENT_ID=/^[A-Z0-9]{10,32}$/;
 let configPromise,configCache,configTime=0,paypalLoading,checkoutLoading,createLoading,captureLoading;
@@ -29,7 +29,8 @@ async function api(url,{body,timeout=15000}={}){
     throw e;
   }finally{clearTimeout(timer);}
 }
-function validPrice(price){return [PRODUCT.offerPrice,PRODUCT.regularPrice].includes(price);}
+// Historical server-verified orders and receipts retain their accepted USD99 total.
+function validPrice(price){return [PRODUCT.offerPrice,PRODUCT.regularPrice,'99.00'].includes(price);}
 function formatPrice(price){return `$${Number(price).toFixed(0)}`;}
 function currentPrice(){return configCache?.offerActive&&Date.parse(configCache.offerExpiresAt)>Date.now()+serverOffset?PRODUCT.offerPrice:PRODUCT.regularPrice;}
 function checkoutPrice(){return acceptedOrder?.price||currentPrice();}
@@ -40,7 +41,7 @@ function updateOfferDisplay(){
   const active=configCache.offerActive&&remaining>0,price=active?PRODUCT.offerPrice:PRODUCT.regularPrice;
   if(lastDisplayedPrice===PRODUCT.offerPrice&&price===PRODUCT.regularPrice&&!acceptedOrder){
     const terms=document.querySelector('#purchase-terms');if(terms?.checked){terms.checked=false;termsListener?.();}
-    status('Your promotional window has ended. Review the US$99 total and confirm the purchase terms to continue.');
+    status(`Your promotional window has ended. Review the US${formatPrice(PRODUCT.regularPrice)} total and confirm the purchase terms to continue.`);
   }
   lastDisplayedPrice=price;
   for(const node of document.querySelectorAll?.('[data-course-price]')||[]){node.textContent=formatPrice(node.closest?.('#checkout-dialog')?checkoutPrice():price);node.classList?.toggle('price-unavailable',false);}
