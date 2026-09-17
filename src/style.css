@@ -21,3 +21,6 @@ dialog{width:min(510px,calc(100% - 30px));border:1px solid #a06caa80;background:
 
 /* Keep decimal course prices readable on narrow screens. */
 .price{flex-wrap:wrap;row-gap:8px;font-variant-numeric:tabular-nums}.price>[data-course-price]{white-space:nowrap}@media(max-width:760px){.price{font-size:clamp(48px,14vw,70px);letter-spacing:-3px}.price>span:not([data-course-price]){margin-left:12px}}
+
+/* Preserve the full cropped frame for the additional portrait previews. */
+.inspiration-card.animated-card.adult-preview img{object-fit:contain;background:#160922}
