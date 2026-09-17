@@ -1,0 +1,94 @@
+<section id="uvt-galeri-karakter-id" lang="id" aria-labelledby="uvt-galeri-karakter-id-judul" style="box-sizing:border-box; width:100%; max-width:1120px; margin:0 auto; font-family:Arial,Helvetica,sans-serif; color:#2d103b; background:#f4e8f7; border:1px solid #dcc3e4; border-radius:22px; overflow:hidden; text-align:left;">
+  <div style="box-sizing:border-box; padding:26px 20px 18px;">
+    <p style="margin:0 0 12px; color:#9642b0; font-size:10px; font-weight:700; line-height:1.5; letter-spacing:1.7px;">TEMUKAN KARAKTER VERSI LO</p>
+    <h2 id="uvt-galeri-karakter-id-judul" style="margin:0 0 14px; max-width:720px; color:#2d103b; font-size:clamp(28px,4vw,42px); line-height:1.1; font-weight:700; letter-spacing:-1px; text-transform:none;">Satu imajinasi.<br><span style="color:#9642b0;">Banyak karakter.</span></h2>
+    <p style="margin:0; max-width:650px; color:#725b7d; font-size:14px; line-height:1.7; font-weight:400;">19 karakter bergerak, masing-masing dengan gaya dan suasananya sendiri. Geser dan temukan inspirasi buat kreasi lo berikutnya.</p>
+    <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px; margin-top:20px; color:#725b7d; font-size:11px; line-height:1.5;">
+      <span>Geser untuk jelajahi <span aria-hidden="true" style="color:#9642b0; margin-left:4px;">↔</span></span>
+      <span style="border:1px solid #dcc3e4; border-radius:999px; padding:5px 9px; white-space:nowrap;">19 karakter bergerak</span>
+    </div>
+  </div>
+  <div role="region" aria-label="Galeri 19 karakter AI. Geser ke samping atau gunakan tombol panah pada papan ketik." tabindex="0" style="box-sizing:border-box; display:flex; align-items:stretch; gap:12px; width:100%; min-width:0; overflow-x:auto; overflow-y:hidden; scroll-snap-type:x proximity; -webkit-overflow-scrolling:touch; overscroll-behavior-inline:contain; padding:0 20px 16px; scrollbar-width:thin; scrollbar-color:#9642b0 transparent;">
+    <article style="box-sizing:border-box; flex:0 0 68%; max-width:224px; min-width:0; margin:0; scroll-snap-align:start; border:1px solid #dcc3e4; border-radius:14px; overflow:hidden; background:#431651;">
+      <img src="https://formumaxlabs.com/assets/lynk/character-video-11-677b82bf.webp" alt="Contoh karakter AI bergerak 01" width="240" height="432" loading="lazy" decoding="async" style="display:block; width:100%; height:auto; aspect-ratio:5/9; object-fit:cover; margin:0; background:#271131;">
+      <div style="box-sizing:border-box; padding:13px 12px 15px;"><span style="display:block; color:#f7eafa; font-size:10px; font-weight:700; line-height:1.5; letter-spacing:1.5px;">KARAKTER BERGERAK 01</span></div>
+    </article>
+    <article style="box-sizing:border-box; flex:0 0 68%; max-width:224px; min-width:0; margin:0; scroll-snap-align:start; border:1px solid #dcc3e4; border-radius:14px; overflow:hidden; background:#431651;">
+      <img src="https://formumaxlabs.com/assets/lynk/character-video-12-689da875.webp" alt="Contoh karakter AI bergerak 02" width="240" height="432" loading="lazy" decoding="async" style="display:block; width:100%; height:auto; aspect-ratio:5/9; object-fit:cover; margin:0; background:#271131;">
+      <div style="box-sizing:border-box; padding:13px 12px 15px;"><span style="display:block; color:#f7eafa; font-size:10px; font-weight:700; line-height:1.5; letter-spacing:1.5px;">KARAKTER BERGERAK 02</span></div>
+    </article>
+    <article style="box-sizing:border-box; flex:0 0 68%; max-width:224px; min-width:0; margin:0; scroll-snap-align:start; border:1px solid #dcc3e4; border-radius:14px; overflow:hidden; background:#431651;">
+      <img src="https://formumaxlabs.com/assets/lynk/character-video-13-55090516.webp" alt="Contoh karakter AI bergerak 03" width="240" height="432" loading="lazy" decoding="async" style="display:block; width:100%; height:auto; aspect-ratio:5/9; object-fit:cover; margin:0; background:#271131;">
+      <div style="box-sizing:border-box; padding:13px 12px 15px;"><span style="display:block; color:#f7eafa; font-size:10px; font-weight:700; line-height:1.5; letter-spacing:1.5px;">KARAKTER BERGERAK 03</span></div>
+    </article>
+    <article style="box-sizing:border-box; flex:0 0 68%; max-width:224px; min-width:0; margin:0; scroll-snap-align:start; border:1px solid #dcc3e4; border-radius:14px; overflow:hidden; background:#431651;">
+      <img src="https://formumaxlabs.com/assets/lynk/character-video-15-73daea23.webp" alt="Contoh karakter AI bergerak 04" width="240" height="432" loading="lazy" decoding="async" style="display:block; width:100%; height:auto; aspect-ratio:5/9; object-fit:cover; margin:0; background:#271131;">
+      <div style="box-sizing:border-box; padding:13px 12px 15px;"><span style="display:block; color:#f7eafa; font-size:10px; font-weight:700; line-height:1.5; letter-spacing:1.5px;">KARAKTER BERGERAK 04</span></div>
+    </article>
+    <article style="box-sizing:border-box; flex:0 0 68%; max-width:224px; min-width:0; margin:0; scroll-snap-align:start; border:1px solid #dcc3e4; border-radius:14px; overflow:hidden; background:#431651;">
+      <img src="https://formumaxlabs.com/assets/lynk/character-video-16-f57295d2.webp" alt="Contoh karakter AI bergerak 05" width="240" height="432" loading="lazy" decoding="async" style="display:block; width:100%; height:auto; aspect-ratio:5/9; object-fit:cover; margin:0; background:#271131;">
+      <div style="box-sizing:border-box; padding:13px 12px 15px;"><span style="display:block; color:#f7eafa; font-size:10px; font-weight:700; line-height:1.5; letter-spacing:1.5px;">KARAKTER BERGERAK 05</span></div>
+    </article>
+    <article style="box-sizing:border-box; flex:0 0 68%; max-width:224px; min-width:0; margin:0; scroll-snap-align:start; border:1px solid #dcc3e4; border-radius:14px; overflow:hidden; background:#431651;">
+      <img src="https://formumaxlabs.com/assets/lynk/character-video-17-f03dc89e.webp" alt="Contoh karakter AI bergerak 06" width="240" height="432" loading="lazy" decoding="async" style="display:block; width:100%; height:auto; aspect-ratio:5/9; object-fit:cover; margin:0; background:#271131;">
+      <div style="box-sizing:border-box; padding:13px 12px 15px;"><span style="display:block; color:#f7eafa; font-size:10px; font-weight:700; line-height:1.5; letter-spacing:1.5px;">KARAKTER BERGERAK 06</span></div>
+    </article>
+    <article style="box-sizing:border-box; flex:0 0 68%; max-width:224px; min-width:0; margin:0; scroll-snap-align:start; border:1px solid #dcc3e4; border-radius:14px; overflow:hidden; background:#431651;">
+      <img src="https://formumaxlabs.com/assets/lynk/character-video-18-68cec462.webp" alt="Contoh karakter AI bergerak 07" width="240" height="432" loading="lazy" decoding="async" style="display:block; width:100%; height:auto; aspect-ratio:5/9; object-fit:cover; margin:0; background:#271131;">
+      <div style="box-sizing:border-box; padding:13px 12px 15px;"><span style="display:block; color:#f7eafa; font-size:10px; font-weight:700; line-height:1.5; letter-spacing:1.5px;">KARAKTER BERGERAK 07</span></div>
+    </article>
+    <article style="box-sizing:border-box; flex:0 0 68%; max-width:224px; min-width:0; margin:0; scroll-snap-align:start; border:1px solid #dcc3e4; border-radius:14px; overflow:hidden; background:#431651;">
+      <img src="https://formumaxlabs.com/assets/lynk/character-video-20-9a529fff.webp" alt="Contoh karakter AI bergerak 08" width="240" height="432" loading="lazy" decoding="async" style="display:block; width:100%; height:auto; aspect-ratio:5/9; object-fit:cover; margin:0; background:#271131;">
+      <div style="box-sizing:border-box; padding:13px 12px 15px;"><span style="display:block; color:#f7eafa; font-size:10px; font-weight:700; line-height:1.5; letter-spacing:1.5px;">KARAKTER BERGERAK 08</span></div>
+    </article>
+    <article style="box-sizing:border-box; flex:0 0 68%; max-width:224px; min-width:0; margin:0; scroll-snap-align:start; border:1px solid #dcc3e4; border-radius:14px; overflow:hidden; background:#431651;">
+      <img src="https://formumaxlabs.com/assets/lynk/character-video-21-4b348bd8.webp" alt="Contoh karakter AI bergerak 09" width="240" height="432" loading="lazy" decoding="async" style="display:block; width:100%; height:auto; aspect-ratio:5/9; object-fit:cover; margin:0; background:#271131;">
+      <div style="box-sizing:border-box; padding:13px 12px 15px;"><span style="display:block; color:#f7eafa; font-size:10px; font-weight:700; line-height:1.5; letter-spacing:1.5px;">KARAKTER BERGERAK 09</span></div>
+    </article>
+    <article style="box-sizing:border-box; flex:0 0 68%; max-width:224px; min-width:0; margin:0; scroll-snap-align:start; border:1px solid #dcc3e4; border-radius:14px; overflow:hidden; background:#431651;">
+      <img src="https://formumaxlabs.com/assets/lynk/character-video-01-83bdf0dc.webp" alt="Contoh karakter AI bergerak 10" width="240" height="432" loading="lazy" decoding="async" style="display:block; width:100%; height:auto; aspect-ratio:5/9; object-fit:cover; margin:0; background:#271131;">
+      <div style="box-sizing:border-box; padding:13px 12px 15px;"><span style="display:block; color:#f7eafa; font-size:10px; font-weight:700; line-height:1.5; letter-spacing:1.5px;">KARAKTER BERGERAK 10</span></div>
+    </article>
+    <article style="box-sizing:border-box; flex:0 0 68%; max-width:224px; min-width:0; margin:0; scroll-snap-align:start; border:1px solid #dcc3e4; border-radius:14px; overflow:hidden; background:#431651;">
+      <img src="https://formumaxlabs.com/assets/lynk/character-video-02-46450c5b.webp" alt="Contoh karakter AI bergerak 11" width="240" height="432" loading="lazy" decoding="async" style="display:block; width:100%; height:auto; aspect-ratio:5/9; object-fit:cover; margin:0; background:#271131;">
+      <div style="box-sizing:border-box; padding:13px 12px 15px;"><span style="display:block; color:#f7eafa; font-size:10px; font-weight:700; line-height:1.5; letter-spacing:1.5px;">KARAKTER BERGERAK 11</span></div>
+    </article>
+    <article style="box-sizing:border-box; flex:0 0 68%; max-width:224px; min-width:0; margin:0; scroll-snap-align:start; border:1px solid #dcc3e4; border-radius:14px; overflow:hidden; background:#431651;">
+      <img src="https://formumaxlabs.com/assets/lynk/character-video-03-356b7e5e.webp" alt="Contoh karakter AI bergerak 12" width="240" height="432" loading="lazy" decoding="async" style="display:block; width:100%; height:auto; aspect-ratio:5/9; object-fit:cover; margin:0; background:#271131;">
+      <div style="box-sizing:border-box; padding:13px 12px 15px;"><span style="display:block; color:#f7eafa; font-size:10px; font-weight:700; line-height:1.5; letter-spacing:1.5px;">KARAKTER BERGERAK 12</span></div>
+    </article>
+    <article style="box-sizing:border-box; flex:0 0 68%; max-width:224px; min-width:0; margin:0; scroll-snap-align:start; border:1px solid #dcc3e4; border-radius:14px; overflow:hidden; background:#431651;">
+      <img src="https://formumaxlabs.com/assets/lynk/character-video-04-2f310a80.webp" alt="Contoh karakter AI bergerak 13" width="240" height="432" loading="lazy" decoding="async" style="display:block; width:100%; height:auto; aspect-ratio:5/9; object-fit:cover; margin:0; background:#271131;">
+      <div style="box-sizing:border-box; padding:13px 12px 15px;"><span style="display:block; color:#f7eafa; font-size:10px; font-weight:700; line-height:1.5; letter-spacing:1.5px;">KARAKTER BERGERAK 13</span></div>
+    </article>
+    <article style="box-sizing:border-box; flex:0 0 68%; max-width:224px; min-width:0; margin:0; scroll-snap-align:start; border:1px solid #dcc3e4; border-radius:14px; overflow:hidden; background:#431651;">
+      <img src="https://formumaxlabs.com/assets/lynk/character-video-05-8acaad3e.webp" alt="Contoh karakter AI bergerak 14" width="240" height="432" loading="lazy" decoding="async" style="display:block; width:100%; height:auto; aspect-ratio:5/9; object-fit:cover; margin:0; background:#271131;">
+      <div style="box-sizing:border-box; padding:13px 12px 15px;"><span style="display:block; color:#f7eafa; font-size:10px; font-weight:700; line-height:1.5; letter-spacing:1.5px;">KARAKTER BERGERAK 14</span></div>
+    </article>
+    <article style="box-sizing:border-box; flex:0 0 68%; max-width:224px; min-width:0; margin:0; scroll-snap-align:start; border:1px solid #dcc3e4; border-radius:14px; overflow:hidden; background:#431651;">
+      <img src="https://formumaxlabs.com/assets/lynk/character-video-06-59b4829c.webp" alt="Contoh karakter AI bergerak 15" width="240" height="432" loading="lazy" decoding="async" style="display:block; width:100%; height:auto; aspect-ratio:5/9; object-fit:cover; margin:0; background:#271131;">
+      <div style="box-sizing:border-box; padding:13px 12px 15px;"><span style="display:block; color:#f7eafa; font-size:10px; font-weight:700; line-height:1.5; letter-spacing:1.5px;">KARAKTER BERGERAK 15</span></div>
+    </article>
+    <article style="box-sizing:border-box; flex:0 0 68%; max-width:224px; min-width:0; margin:0; scroll-snap-align:start; border:1px solid #dcc3e4; border-radius:14px; overflow:hidden; background:#431651;">
+      <img src="https://formumaxlabs.com/assets/lynk/character-video-07-83984b2f.webp" alt="Contoh karakter AI bergerak 16" width="240" height="432" loading="lazy" decoding="async" style="display:block; width:100%; height:auto; aspect-ratio:5/9; object-fit:cover; margin:0; background:#271131;">
+      <div style="box-sizing:border-box; padding:13px 12px 15px;"><span style="display:block; color:#f7eafa; font-size:10px; font-weight:700; line-height:1.5; letter-spacing:1.5px;">KARAKTER BERGERAK 16</span></div>
+    </article>
+    <article style="box-sizing:border-box; flex:0 0 68%; max-width:224px; min-width:0; margin:0; scroll-snap-align:start; border:1px solid #dcc3e4; border-radius:14px; overflow:hidden; background:#431651;">
+      <img src="https://formumaxlabs.com/assets/lynk/character-video-08-170e6046.webp" alt="Contoh karakter AI bergerak 17" width="240" height="432" loading="lazy" decoding="async" style="display:block; width:100%; height:auto; aspect-ratio:5/9; object-fit:cover; margin:0; background:#271131;">
+      <div style="box-sizing:border-box; padding:13px 12px 15px;"><span style="display:block; color:#f7eafa; font-size:10px; font-weight:700; line-height:1.5; letter-spacing:1.5px;">KARAKTER BERGERAK 17</span></div>
+    </article>
+    <article style="box-sizing:border-box; flex:0 0 68%; max-width:224px; min-width:0; margin:0; scroll-snap-align:start; border:1px solid #dcc3e4; border-radius:14px; overflow:hidden; background:#431651;">
+      <img src="https://formumaxlabs.com/assets/lynk/character-video-09-9d22ea2f.webp" alt="Contoh karakter AI bergerak 18" width="240" height="432" loading="lazy" decoding="async" style="display:block; width:100%; height:auto; aspect-ratio:5/9; object-fit:cover; margin:0; background:#271131;">
+      <div style="box-sizing:border-box; padding:13px 12px 15px;"><span style="display:block; color:#f7eafa; font-size:10px; font-weight:700; line-height:1.5; letter-spacing:1.5px;">KARAKTER BERGERAK 18</span></div>
+    </article>
+    <article style="box-sizing:border-box; flex:0 0 68%; max-width:224px; min-width:0; margin:0; scroll-snap-align:start; border:1px solid #dcc3e4; border-radius:14px; overflow:hidden; background:#431651;">
+      <img src="https://formumaxlabs.com/assets/lynk/character-video-10-25379df6.webp" alt="Contoh karakter AI bergerak 19" width="240" height="432" loading="lazy" decoding="async" style="display:block; width:100%; height:auto; aspect-ratio:5/9; object-fit:cover; margin:0; background:#271131;">
+      <div style="box-sizing:border-box; padding:13px 12px 15px;"><span style="display:block; color:#f7eafa; font-size:10px; font-weight:700; line-height:1.5; letter-spacing:1.5px;">KARAKTER BERGERAK 19</span></div>
+    </article>
+  </div>
+  <div style="box-sizing:border-box; padding:8px 20px 26px;">
+    <p style="margin:0 0 17px; max-width:640px; color:#725b7d; font-size:12px; line-height:1.65;">Beda tampilan, beda cerita. Kembangkan ide lo jadi karakter dengan gaya dan gerak yang khas.</p>
+    <a href="https://lynk.id/abchaer/3e4mjowoj8rk/checkout" style="box-sizing:border-box; display:block; width:100%; max-width:420px; padding:15px 16px; border:1px solid #7a348f; border-radius:12px; background:#803595; color:#ffffff; text-align:center; text-decoration:none; font-size:15px; line-height:1.4; font-weight:700;">Bikin karakter versi gue →</a>
+    <p style="margin:12px 0 0; max-width:650px; color:#725b7d; font-size:10px; line-height:1.6;">Contoh sebagai inspirasi. Hasil bergantung pada gambar, arahan, model AI, dan proses penyempurnaan.</p>
+  </div>
+</section>
