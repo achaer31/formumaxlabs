@@ -4,7 +4,7 @@ import configHandler from '../api/config.js';
 import ordersHandler from '../api/orders.js';
 import captureHandler from '../api/capture.js';
 import accessHandler from '../api/access.js';
-import { COOKIES, createOrder, OFFER_DURATION_MS, PRODUCT, signToken } from '../lib/payments.js';
+import { COOKIES, createOrder, OFFER_DURATION_MS, PRODUCT, signToken, verifyCapture } from '../lib/payments.js';
 
 const ORIGIN = 'https://formumaxlabs.vercel.app';
 const ORDER_ID = '5O190127TN364715T';
@@ -72,7 +72,7 @@ function browser() {
   };
 }
 
-function provider({ captureStatus = 'COMPLETED', approve = true, mutateOrder, captureTimeout = false, metaError = false, price = '19.00', existingSessionId } = {}) {
+function provider({ captureStatus = 'COMPLETED', approve = true, mutateOrder, captureTimeout = false, metaError = false, price = '29.99', existingSessionId } = {}) {
   const courseOrder = sessionId => ({
     id: ORDER_ID, intent: 'CAPTURE', status: approve ? 'APPROVED' : 'CREATED',
     payer: { email_address: 'Buyer@example.com' },
@@ -140,7 +140,7 @@ async function begin(client, consent = false) {
 test('config initializes secure checkout session without exposing secrets or course URL', async () => {
   const client = browser();
   const result = await client.call(configHandler);
-  assert.equal(result.body.price, '19.00');
+  assert.equal(result.body.price, '29.99');
   assert.equal(result.body.currency, 'USD');
   assert.equal(result.body.checkoutAvailable, true);
   assert.ok(!JSON.stringify(result.body).includes('notion'));
@@ -168,7 +168,7 @@ test('order creation uses fixed server price and stable idempotency key on respo
   await begin(client);
   const first = state.calls.find(call => call.path === '/v2/checkout/orders');
   const payload = JSON.parse(first.options.body);
-  assert.deepEqual(payload.purchase_units[0].amount, { currency_code: 'USD', value: '19.00', breakdown: { item_total: { currency_code: 'USD', value: '19.00' } } });
+  assert.deepEqual(payload.purchase_units[0].amount, { currency_code: 'USD', value: '29.99', breakdown: { item_total: { currency_code: 'USD', value: '29.99' } } });
   assert.equal(payload.purchase_units[0].items[0].category, 'DIGITAL_GOODS');
   assert.equal(payload.application_context.shipping_preference, 'NO_SHIPPING');
   client.jar.delete(COOKIES.order); // Simulate a lost create response, preserving config session.
@@ -348,7 +348,7 @@ test('Meta purchase is consent-gated, hashed, and deduplicates with browser even
   const event = state.meta[0].data[0];
   assert.equal(event.event_name, 'Purchase');
   assert.equal(event.event_id, result.body.eventId);
-  assert.equal(event.custom_data.value, 19);
+  assert.equal(event.custom_data.value, 29.99);
   assert.equal(event.custom_data.currency, 'USD');
   assert.match(event.user_data.em[0], /^[a-f0-9]{64}$/);
   assert.ok(!JSON.stringify(event).includes('Buyer@example.com'));
@@ -385,11 +385,11 @@ test('Meta outages do not prevent delivery of completed purchases', async () => 
   assert.equal(result.body.notionUrl, process.env.COURSE_NOTION_URL);
 });
 
-test('first-visit offer is five hours, persists across refresh, and expires to the real USD29 price', async () => {
+test('first-visit offer is five hours, persists across refresh, and expires to the real USD49.99 price', async () => {
   const start = originalNow(); Date.now = () => start;
   const client = browser();
   const first = await client.call(configHandler);
-  assert.equal(first.body.price, '19.00'); assert.equal(first.body.regularPrice, '29.00');
+  assert.equal(first.body.price, '29.99'); assert.equal(first.body.regularPrice, '49.99');
   assert.equal(Date.parse(first.body.offerExpiresAt) - Date.parse(first.body.serverTime), OFFER_DURATION_MS);
   const token = client.jar.get(COOKIES.offer);
   assert.ok(first.headers.get('set-cookie').some(value => value.startsWith(COOKIES.offer) && value.includes('Max-Age=31536000')));
@@ -399,7 +399,7 @@ test('first-visit offer is five hours, persists across refresh, and expires to t
   assert.equal(client.jar.get(COOKIES.offer), token);
   Date.now = () => start + OFFER_DURATION_MS;
   const expired = await client.call(configHandler);
-  assert.equal(expired.body.price, '29.00'); assert.equal(expired.body.offerActive, false);
+  assert.equal(expired.body.price, '49.99'); assert.equal(expired.body.offerActive, false);
   assert.equal(expired.body.offerExpiresAt, first.body.offerExpiresAt);
   assert.equal(client.jar.get(COOKIES.offer), token);
 });
@@ -411,58 +411,58 @@ test('altered promo deadlines cannot restore the discount or submit a client-sel
   changed.expiresAt += OFFER_DURATION_MS;
   client.jar.set(COOKIES.offer, `${Buffer.from(JSON.stringify(changed)).toString('base64url')}.${signature}`);
   const config = await client.call(configHandler);
-  assert.equal(config.body.price, '29.00'); assert.equal(config.body.offerActive, false);
-  for (const expectedPrice of ['19.00', '0.01']) {
+  assert.equal(config.body.price, '49.99'); assert.equal(config.body.offerActive, false);
+  for (const expectedPrice of ['29.99', '0.01']) {
     const result = await client.call(ordersHandler, { method: 'POST', body: { productId: PRODUCT.id, expectedPrice } });
     assert.equal(result.statusCode, 409); assert.equal(result.body.error.code, 'PRICE_CHANGED');
   }
   assert.equal(state.calls.length, 0);
 });
 
-test('regular-price USD29 order, capture, access, and Meta Purchase use the actual server-bound amount', async () => {
+test('regular-price USD49.99 order, capture, access, and Meta Purchase use the actual server-bound amount', async () => {
   process.env.META_CAPI_ACCESS_TOKEN = 'mock-meta-token';
   const start = originalNow(); Date.now = () => start;
   const client = browser(); await client.call(configHandler);
   Date.now = () => start + OFFER_DURATION_MS + 1000;
-  const state = provider({ price: '29.00' });
-  const config = await client.call(configHandler); assert.equal(config.body.price, '29.00');
-  const created = await client.call(ordersHandler, { method: 'POST', body: { productId: PRODUCT.id, expectedPrice: '29.00', consent: true } });
-  assert.equal(created.body.price, '29.00');
+  const state = provider({ price: '49.99' });
+  const config = await client.call(configHandler); assert.equal(config.body.price, '49.99');
+  const created = await client.call(ordersHandler, { method: 'POST', body: { productId: PRODUCT.id, expectedPrice: '49.99', consent: true } });
+  assert.equal(created.body.price, '49.99');
   const request = state.calls.find(call => call.path === '/v2/checkout/orders');
-  assert.equal(JSON.parse(request.options.body).purchase_units[0].amount.value, '29.00');
+  assert.equal(JSON.parse(request.options.body).purchase_units[0].amount.value, '49.99');
   const captured = await client.call(captureHandler, { method: 'POST', body: { orderId: ORDER_ID } });
-  assert.equal(captured.statusCode, 200); assert.equal(captured.body.price, '29.00');
-  assert.equal(state.meta[0].data[0].custom_data.value, 29);
-  const access = await client.call(accessHandler); assert.equal(access.statusCode, 200); assert.equal(access.body.price, '29.00');
+  assert.equal(captured.statusCode, 200); assert.equal(captured.body.price, '49.99');
+  assert.equal(state.meta[0].data[0].custom_data.value, 49.99);
+  const access = await client.call(accessHandler); assert.equal(access.statusCode, 200); assert.equal(access.body.price, '49.99');
 });
 
-test('USD19 order accepted before the deadline is honored after the public price becomes USD29', async () => {
+test('USD29.99 order accepted before the deadline is honored after the public price becomes USD49.99', async () => {
   const start = originalNow(); Date.now = () => start;
   const client = browser(); await client.call(configHandler);
   Date.now = () => start + 4 * 60 * 60 * 1000;
   const state = provider(); await begin(client);
   Date.now = () => start + OFFER_DURATION_MS + 1000;
   const config = await client.call(configHandler);
-  assert.equal(config.body.price, '29.00'); assert.equal(config.body.acceptedOrder.price, '19.00');
-  const retry = await client.call(ordersHandler, { method: 'POST', body: { productId: PRODUCT.id, expectedPrice: '19.00' } });
-  assert.equal(retry.statusCode, 200); assert.equal(retry.body.price, '19.00');
+  assert.equal(config.body.price, '49.99'); assert.equal(config.body.acceptedOrder.price, '29.99');
+  const retry = await client.call(ordersHandler, { method: 'POST', body: { productId: PRODUCT.id, expectedPrice: '29.99' } });
+  assert.equal(retry.statusCode, 200); assert.equal(retry.body.price, '29.99');
   assert.equal(state.calls.filter(call => call.path === '/v2/checkout/orders').length, 1);
   const result = await client.call(captureHandler, { method: 'POST', body: { orderId: ORDER_ID } });
-  assert.equal(result.statusCode, 200); assert.equal(result.body.price, '19.00');
+  assert.equal(result.statusCode, 200); assert.equal(result.body.price, '29.99');
 });
 
-test('a USD29 order cannot unlock from a mismatched USD19 PayPal amount', async () => {
+test('a USD49.99 order cannot unlock from a mismatched USD29.99 PayPal amount', async () => {
   const start = originalNow(); Date.now = () => start;
   const client = browser(); await client.call(configHandler);
   Date.now = () => start + OFFER_DURATION_MS + 1000;
-  const state = provider({ price: '19.00' }); await client.call(configHandler);
-  await client.call(ordersHandler, { method: 'POST', body: { productId: PRODUCT.id, expectedPrice: '29.00' } });
+  const state = provider({ price: '29.99' }); await client.call(configHandler);
+  await client.call(ordersHandler, { method: 'POST', body: { productId: PRODUCT.id, expectedPrice: '49.99' } });
   const result = await client.call(captureHandler, { method: 'POST', body: { orderId: ORDER_ID } });
   assert.equal(result.statusCode, 409); assert.equal(result.body.error.code, 'PAYMENT_MISMATCH');
   assert.equal(state.captured, false);
 });
 
-test('valid accepted USD19 order survives an earlier checkout-cookie expiry without extending order lifetime', async () => {
+test('valid accepted USD29.99 order survives an earlier checkout-cookie expiry without extending order lifetime', async () => {
   const start = originalNow(); Date.now = () => start;
   const client = browser(); await client.call(configHandler);
   // A checkout session starts at hour 3.5; its later order is valid until 6.5.
@@ -470,22 +470,22 @@ test('valid accepted USD19 order survives an earlier checkout-cookie expiry with
   await client.call(configHandler);
   Date.now = () => start + 4.5 * 60 * 60 * 1000;
   const state = provider();
-  const created = await client.call(ordersHandler, { method: 'POST', body: { productId: PRODUCT.id, expectedPrice: '19.00' } });
+  const created = await client.call(ordersHandler, { method: 'POST', body: { productId: PRODUCT.id, expectedPrice: '29.99' } });
   assert.equal(created.statusCode, 201);
   const orderCookie = client.jar.get(COOKIES.order);
   Date.now = () => start + 5.75 * 60 * 60 * 1000;
   const recovered = await client.call(configHandler);
-  assert.equal(recovered.body.price, '29.00');
-  assert.equal(recovered.body.acceptedOrder.price, '19.00');
+  assert.equal(recovered.body.price, '49.99');
+  assert.equal(recovered.body.acceptedOrder.price, '29.99');
   assert.equal(client.jar.get(COOKIES.order), orderCookie, 'order lifetime must not be refreshed');
-  const retried = await client.call(ordersHandler, { method: 'POST', body: { productId: PRODUCT.id, expectedPrice: '19.00' } });
+  const retried = await client.call(ordersHandler, { method: 'POST', body: { productId: PRODUCT.id, expectedPrice: '29.99' } });
   assert.equal(retried.statusCode, 200);
   assert.equal(retried.body.orderId, created.body.orderId);
   assert.equal(state.calls.filter(call => call.path === '/v2/checkout/orders').length, 1);
   Date.now = () => start + 6.5 * 60 * 60 * 1000;
   const expired = await client.call(configHandler);
   assert.equal(expired.body.acceptedOrder, null, 'expired order cannot be recovered indefinitely');
-  assert.equal(expired.body.price, '29.00');
+  assert.equal(expired.body.price, '49.99');
 });
 
 test('pricing migration preserves preexisting offer deadlines before and after their original expiry', async () => {
@@ -497,41 +497,53 @@ test('pricing migration preserves preexisting offer deadlines before and after t
   client.jar.set(COOKIES.offer, historicalCookie);
   Date.now = () => start + 4 * 60 * 60 * 1000;
   const active = await client.call(configHandler);
-  assert.equal(active.body.price, '19.00');
-  assert.equal(active.body.offerPrice, '19.00');
-  assert.equal(active.body.regularPrice, '29.00');
+  assert.equal(active.body.price, '29.99');
+  assert.equal(active.body.offerPrice, '29.99');
+  assert.equal(active.body.regularPrice, '49.99');
   assert.equal(Date.parse(active.body.offerExpiresAt), expiresAt);
   assert.equal(client.jar.get(COOKIES.offer), historicalCookie);
   Date.now = () => expiresAt;
   const expired = await client.call(configHandler);
-  assert.equal(expired.body.price, '29.00');
+  assert.equal(expired.body.price, '49.99');
   assert.equal(expired.body.offerActive, false);
   assert.equal(Date.parse(expired.body.offerExpiresAt), expiresAt);
   assert.equal(client.jar.get(COOKIES.offer), historicalCookie);
 });
 
-test('new orders reject historical USD99 prices and never send them to PayPal', async () => {
+test('new orders reject historical and truncated prices without contacting PayPal', async () => {
   const state = provider();
   const client = browser();
   await client.call(configHandler);
-  const response = await client.call(ordersHandler, { method: 'POST', body: { productId: PRODUCT.id, expectedPrice: '99.00' } });
-  assert.equal(response.statusCode, 409);
-  assert.equal(response.body.error.code, 'PRICE_CHANGED');
-  await assert.rejects(createOrder('11111111-1111-1111-1111-111111111111', '99.00'), error => error.code === 'PAYMENT_MISMATCH');
+  for (const price of ['19.00', '29.00', '99.00', '29', '49', '49.00']) {
+    const response = await client.call(ordersHandler, { method: 'POST', body: { productId: PRODUCT.id, expectedPrice: price } });
+    assert.equal(response.statusCode, 409, price);
+    assert.equal(response.body.error.code, 'PRICE_CHANGED');
+    await assert.rejects(createOrder('11111111-1111-1111-1111-111111111111', price), error => error.code === 'PAYMENT_MISMATCH');
+  }
   assert.equal(state.calls.length, 0);
 });
 
-test('historical USD29, USD99 and price-less USD29 orders retain their bound amount through capture and access', async () => {
+test('current decimal prices require an exact cent match in verified PayPal captures', () => {
+  for (const price of ['29.99', '49.99']) {
+    const capture = { id: CAPTURE_ID, status: 'COMPLETED', amount: { currency_code: 'USD', value: price } };
+    assert.equal(verifyCapture(capture, ORDER_ID, CAPTURE_ID, price), capture);
+    for (const value of [price.split('.')[0], `${price.split('.')[0]}.00`, price.replace('.99', '.98'), price.replace('.99', '.999')]) {
+      assert.throws(() => verifyCapture({ ...capture, amount: { currency_code: 'USD', value } }, ORDER_ID, CAPTURE_ID, price), error => error.code === 'PAYMENT_MISMATCH', value);
+    }
+  }
+});
+
+test('historical USD19, USD29, USD99 and price-less USD29 orders retain their bound amount through capture and access', async () => {
   process.env.META_CAPI_ACCESS_TOKEN = 'mock-meta-token';
   const sessionId = '11111111-1111-1111-1111-111111111111';
-  for (const storedPrice of ['29.00', '99.00', undefined]) {
+  for (const storedPrice of ['19.00', '29.00', '99.00', undefined]) {
     const expectedPrice = storedPrice ?? '29.00';
     const state = provider({ price: expectedPrice, existingSessionId: sessionId });
     const client = browser();
     client.jar.set(COOKIES.checkout, signToken('checkout', { sessionId }));
     client.jar.set(COOKIES.order, signToken('order', { sessionId, orderId: ORDER_ID, productId: PRODUCT.id, consent: true, ...(storedPrice ? { price: storedPrice } : {}) }));
     const config = await client.call(configHandler);
-    assert.equal(config.body.price, '19.00', 'current welcome offer must not reinterpret an accepted historic order');
+    assert.equal(config.body.price, '29.99', 'current welcome offer must not reinterpret an accepted historic order');
     assert.equal(config.body.acceptedOrder.price, expectedPrice);
     const existing = await client.call(ordersHandler, { method: 'POST', body: { productId: PRODUCT.id, expectedPrice } });
     assert.equal(existing.statusCode, 200);
@@ -547,8 +559,8 @@ test('historical USD29, USD99 and price-less USD29 orders retain their bound amo
   }
 });
 
-test('historical paid cookies remain usable and price-less USD29 access rejects a USD19 capture', async () => {
-  for (const storedPrice of ['29.00', '99.00', undefined]) {
+test('historical paid cookies remain usable and price-less USD29 access rejects the current USD29.99 capture', async () => {
+  for (const storedPrice of ['19.00', '29.00', '99.00', undefined]) {
     const expectedPrice = storedPrice ?? '29.00';
     provider({ price: expectedPrice });
     const client = browser();
@@ -557,7 +569,7 @@ test('historical paid cookies remain usable and price-less USD29 access rejects 
     assert.equal(access.statusCode, 200);
     assert.equal(access.body.price, expectedPrice);
   }
-  provider({ price: '19.00' });
+  provider({ price: '29.99' });
   const client = browser();
   client.jar.set(COOKIES.access, signToken('access', { orderId: ORDER_ID, captureId: CAPTURE_ID, productId: PRODUCT.id }, 31536000));
   const mismatch = await client.call(accessHandler);

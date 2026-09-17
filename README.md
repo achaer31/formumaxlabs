@@ -1,6 +1,6 @@
 # Formumax Labs
 
-English landing page and one-time PayPal checkout for Ultimate AI Video Mastery: USD 19 during a five-hour browser welcome offer, then USD 29.
+English landing page and one-time PayPal checkout for Ultimate AI Video Mastery: USD 29.99 during a five-hour browser welcome offer, then USD 49.99.
 
 - Main route: `/ultimatevideoaimastery`; `/` currently presents the flagship product.
 - Paid delivery route: `/ultimatevideoaimastery/access`.

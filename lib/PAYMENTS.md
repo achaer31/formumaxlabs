@@ -24,13 +24,13 @@ Call all APIs same-origin with browser cookies and JSON `Content-Type` on POSTs.
 Errors have `{ "error": { "code": "...", "message": "..." } }`.
 
 1. `GET /api/config`: initializes secure HttpOnly checkout and first-visit offer
-   cookies. Returns `{paypalClientId, price, regularPrice:"29.00", offerPrice:"19.00",
+   cookies. Returns `{paypalClientId, price, regularPrice:"49.99", offerPrice:"29.99",
    offerActive, offerExpiresAt, serverTime, acceptedOrder, currency, productId,
    productName, checkoutAvailable, pixelId}`. Times are ISO strings; the deadline
    stays fixed on refresh. Check `checkoutAvailable` before loading PayPal buttons.
 2. `POST /api/orders` with `{productId:"ultimate-video-ai-mastery", expectedPrice?, consent:boolean, fbp?, fbc?}`.
-   Returns `{orderId, price, currency:"USD"}`. The server chooses USD19 before the
-   signed five-hour deadline and USD29 afterward. `expectedPrice` is a display
+   Returns `{orderId, price, currency:"USD"}`. The server chooses USD29.99 before the
+   signed five-hour deadline and USD49.99 afterward. `expectedPrice` is a display
    consistency check, not permission to set a price: a mismatch returns
    `PRICE_CHANGED` before creating an order. Creation retries reuse a stable
    PayPal request ID for that checkout session and server-chosen price.
@@ -64,17 +64,19 @@ cookies cannot be identified without an account or durable identity service.
 
 Existing offer cookies retain their original deadlines across pricing changes;
 changing the welcome price never starts a new five-hour window. A newly created
-order costs USD19 during that window and USD29 afterward. Existing signed orders
-retain their accepted USD19, USD29, or historical USD99 price while the order's
+order costs USD29.99 during that window and USD49.99 afterward. Existing signed orders
+retain their accepted price, including historical USD19, USD29, or USD99, while the order's
 two-hour cookie remains valid. If its earlier checkout cookie expires first, the
 checkout session is recovered without extending the order's lifetime. The config
 response's `acceptedOrder` exposes this accepted total to that browser.
 
-Historic signed USD29 and USD99 receipts remain supported. A legacy order or
+Historic signed USD19, USD29, and USD99 receipts remain supported. A legacy order or
 access cookie without a price always means the original USD29 price, never the
-current USD19 welcome price. Historical USD99 is allowed only for an existing
-signed order or receipt; creation of a new USD99 order is rejected. Capture,
-access, receipts, and Purchase events use the verified order amount.
+current USD29.99 welcome price. Historical prices are allowed only for an existing
+signed order or receipt; new orders accept only USD29.99 or USD49.99. Capture,
+access, receipts, and Purchase events use the verified order amount. PayPal amounts
+are compared as exact integer cents; truncated USD29 or USD49 amounts cannot match
+the current prices. Meta Purchase values retain the verified decimal amount.
 
 `initOffer()` in `src/purchase.js` shares a single config request with checkout
 and tracking, updates `[data-course-price]`, `[data-promo-only]`,
@@ -82,7 +84,7 @@ and tracking, updates `[data-course-price]`, `[data-promo-only]`,
 expiry. Prices inside the checkout dialog show the accepted order total when
 present. A price change before order creation asks the buyer to review the new
 total and confirm the purchase terms again; it never silently creates the
-higher-priced order from a displayed USD19 total.
+higher-priced order from a displayed USD29.99 total.
 
 ## Behavior and limits
 

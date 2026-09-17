@@ -1,4 +1,4 @@
-const PRODUCT={id:'ultimate-video-ai-mastery',offerPrice:'19.00',regularPrice:'29.00',currency:'USD'};
+const PRODUCT={id:'ultimate-video-ai-mastery',offerPrice:'29.99',regularPrice:'49.99',currency:'USD'};
 const CONSENT_KEY='formumax-advertising-consent',PENDING_KEY='formumax-pending-checkout';
 const PAYMENT_ID=/^[A-Z0-9]{10,32}$/;
 let configPromise,configCache,configTime=0,paypalLoading,checkoutLoading,createLoading,captureLoading;
@@ -29,9 +29,9 @@ async function api(url,{body,timeout=15000}={}){
     throw e;
   }finally{clearTimeout(timer);}
 }
-// Historical server-verified orders and receipts retain their accepted USD99 total.
-function validPrice(price){return [PRODUCT.offerPrice,PRODUCT.regularPrice,'99.00'].includes(price);}
-function formatPrice(price){return `$${Number(price).toFixed(0)}`;}
+// Historical server-verified orders and receipts retain their accepted total.
+function validPrice(price){return [PRODUCT.offerPrice,PRODUCT.regularPrice,'19.00','29.00','99.00'].includes(price);}
+function formatPrice(price){const amount=Number(price);return `$${amount.toFixed(Number.isInteger(amount)?0:2)}`;}
 function currentPrice(){return configCache?.offerActive&&Date.parse(configCache.offerExpiresAt)>Date.now()+serverOffset?PRODUCT.offerPrice:PRODUCT.regularPrice;}
 function checkoutPrice(){return acceptedOrder?.price||currentPrice();}
 function assertProduct(data){if(!data||!validPrice(data.price)||data.currency!==PRODUCT.currency)throw Error('The checkout details have changed. Please refresh the page before continuing.');}
