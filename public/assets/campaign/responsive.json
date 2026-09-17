@@ -1,0 +1,102 @@
+{
+  "curriculum": {
+    "480": {
+      "src": "/assets/campaign/curriculum-480-989628000d.webp",
+      "bytes": 24458
+    },
+    "960": {
+      "src": "/assets/campaign/curriculum-960-862a24e129.webp",
+      "bytes": 68562
+    }
+  },
+  "expression": {
+    "480": {
+      "src": "/assets/campaign/expression-480-38f4d3bfac.webp",
+      "bytes": 21334
+    },
+    "960": {
+      "src": "/assets/campaign/expression-960-899e4a2d72.webp",
+      "bytes": 58520
+    }
+  },
+  "final": {
+    "480": {
+      "src": "/assets/campaign/final-480-281d994e01.webp",
+      "bytes": 23288
+    },
+    "960": {
+      "src": "/assets/campaign/final-960-35c579695f.webp",
+      "bytes": 64066
+    }
+  },
+  "hero": {
+    "480": {
+      "src": "/assets/campaign/hero-480-f7f8a1d1ca.webp",
+      "bytes": 23074
+    },
+    "960": {
+      "src": "/assets/campaign/hero-960-d270f9d99d.webp",
+      "bytes": 60750
+    }
+  },
+  "imagination": {
+    "480": {
+      "src": "/assets/campaign/imagination-480-d915bc2d7b.webp",
+      "bytes": 36200
+    },
+    "960": {
+      "src": "/assets/campaign/imagination-960-8427d0cc9f.webp",
+      "bytes": 99650
+    }
+  },
+  "movement": {
+    "480": {
+      "src": "/assets/campaign/movement-480-74758d9ff1.webp",
+      "bytes": 20914
+    },
+    "960": {
+      "src": "/assets/campaign/movement-960-af0f073089.webp",
+      "bytes": 56212
+    }
+  },
+  "offer": {
+    "480": {
+      "src": "/assets/campaign/offer-480-bf6041832a.webp",
+      "bytes": 27970
+    },
+    "960": {
+      "src": "/assets/campaign/offer-960-38d995510a.webp",
+      "bytes": 75980
+    }
+  },
+  "poster": {
+    "480": {
+      "src": "/assets/campaign/poster-480-db8d639a62.webp",
+      "bytes": 62106
+    },
+    "960": {
+      "src": "/assets/campaign/poster-960-63a0a2a275.webp",
+      "bytes": 168558
+    }
+  },
+  "prompts": {
+    "480": {
+      "src": "/assets/campaign/prompts-480-946a6b1876.webp",
+      "bytes": 21038
+    },
+    "960": {
+      "src": "/assets/campaign/prompts-960-48d7c881d9.webp",
+      "bytes": 57576
+    }
+  },
+  "workflow": {
+    "480": {
+      "src": "/assets/campaign/workflow-480-a2b732a0e5.webp",
+      "bytes": 21286
+    },
+    "960": {
+      "src": "/assets/campaign/workflow-960-1493e840ed.webp",
+      "bytes": 51396
+    }
+  }
+}

@@ -296,7 +296,9 @@
     "posterBytes": 20629,
     "gifFrames": 51,
     "sourceDuration": 5.03,
-    "adult": true
+    "adult": true,
+    "video": "/assets/animated/video-22.mp4",
+    "videoBytes": 108914
   },
   {
     "id": "video-23",
@@ -310,7 +312,9 @@
     "posterBytes": 24520,
     "gifFrames": 51,
     "sourceDuration": 5.03,
-    "adult": true
+    "adult": true,
+    "video": "/assets/animated/video-23.mp4",
+    "videoBytes": 122807
   },
   {
     "id": "video-24",
@@ -324,7 +328,9 @@
     "posterBytes": 19300,
     "gifFrames": 51,
     "sourceDuration": 5.03,
-    "adult": true
+    "adult": true,
+    "video": "/assets/animated/video-24.mp4",
+    "videoBytes": 115876
   },
   {
     "id": "video-25",
@@ -338,7 +344,9 @@
     "posterBytes": 18809,
     "gifFrames": 51,
     "sourceDuration": 5.03,
-    "adult": true
+    "adult": true,
+    "video": "/assets/animated/video-25.mp4",
+    "videoBytes": 113407
   },
   {
     "id": "video-26",
@@ -352,7 +360,9 @@
     "posterBytes": 44003,
     "gifFrames": 51,
     "sourceDuration": 5.03,
-    "adult": true
+    "adult": true,
+    "video": "/assets/animated/video-26.mp4",
+    "videoBytes": 174590
   },
   {
     "id": "video-27",
@@ -366,7 +376,9 @@
     "posterBytes": 28719,
     "gifFrames": 51,
     "sourceDuration": 5.03,
-    "adult": true
+    "adult": true,
+    "video": "/assets/animated/video-27.mp4",
+    "videoBytes": 232340
   },
   {
     "id": "video-28",
@@ -380,7 +392,9 @@
     "posterBytes": 28366,
     "gifFrames": 71,
     "sourceDuration": 7.06,
-    "adult": true
+    "adult": true,
+    "video": "/assets/animated/video-28.mp4",
+    "videoBytes": 152027
   },
   {
     "id": "video-29",
@@ -394,7 +408,9 @@
     "posterBytes": 34166,
     "gifFrames": 51,
     "sourceDuration": 5.03,
-    "adult": true
+    "adult": true,
+    "video": "/assets/animated/video-29.mp4",
+    "videoBytes": 194424
   },
   {
     "id": "video-30",
@@ -408,7 +424,9 @@
     "posterBytes": 28416,
     "gifFrames": 51,
     "sourceDuration": 5.03,
-    "adult": true
+    "adult": true,
+    "video": "/assets/animated/video-30.mp4",
+    "videoBytes": 147618
   },
   {
     "id": "video-31",
@@ -422,7 +440,9 @@
     "posterBytes": 28504,
     "gifFrames": 51,
     "sourceDuration": 5.03,
-    "adult": true
+    "adult": true,
+    "video": "/assets/animated/video-31.mp4",
+    "videoBytes": 153379
   },
   {
     "id": "video-32",
@@ -436,6 +456,8 @@
     "posterBytes": 43477,
     "gifFrames": 51,
     "sourceDuration": 5.03,
-    "adult": true
+    "adult": true,
+    "video": "/assets/animated/video-32.mp4",
+    "videoBytes": 164693
   }
 ]
